@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:latest
+    container_name: pure_db
+    env_file:
+      - ./.env   
+    restart: always 
+    ports:
+      - ${DB_PORT}:3306
+    
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pure_app
+    environment:
+      DB_HOST: db
+      APP_HOST: ${APP_HOST}
+      APP_PORT: ${APP_PORT}
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - ${APP_PORT}:8000
+    depends_on:
+      - db
+    links:
+      - db
+
+volumes:
+  db-data:
+
+
